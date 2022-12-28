@@ -221,3 +221,6 @@ createMissingGoldenEnv = "CREATE_MISSING_GOLDEN"
 
 recreateBrokenGoldenEnv :: String
 recreateBrokenGoldenEnv = "RECREATE_BROKEN_GOLDEN"
+
+compatibilityCheckEnv :: String 
+compatibilityCheckEnv = "COMPATIBILITY_CHECK"

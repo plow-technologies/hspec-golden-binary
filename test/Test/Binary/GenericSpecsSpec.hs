@@ -8,7 +8,7 @@ import qualified Data.ByteString.Lazy as BSL
 import Data.Proxy
 import System.Directory
 import Test.Binary.GenericSpecs
-import Test.Binary.Internal.Utils (RandomMismatchOption (..), RandomSamples(..), createMissingGoldenEnv, recreateBrokenGoldenEnv, LengthEncoded(..))
+import Test.Binary.Internal.Utils (RandomSamples(..), createMissingGoldenEnv, recreateBrokenGoldenEnv, LengthEncoded(..))
 import Test.Hspec
 -- various iterations of a Product and Sum Type and their serializations
 import qualified Test.Types as T
