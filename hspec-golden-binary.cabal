@@ -59,6 +59,7 @@ test-suite test
       Test.Binary.GenericSpecsSpec
       Test.Types
       Test.Types.AlteredSelector
+      Test.Types.BackwardCompatible
       Test.Types.BrokenSerialization
       Test.Types.MismatchedToAndFromSerialization
       Test.Types.NewSelector
