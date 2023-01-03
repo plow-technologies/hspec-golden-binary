@@ -49,6 +49,9 @@ import qualified Data.Binary as Binary
 -- compare with golden file if it exists. Golden file encodes the serialized format of a
 -- type. It is recommended that you put the golden files under revision control
 -- to help monitor changes.
+-- COMPATIBILITY_CHECK mode: 
+--  By using this mode checks with golden files are in terms of type compatibility instead of byte for byte.
+--  This is useful for checking forward or backward compatibility of types that evolves in time.
 goldenSpecs ::
   forall s a.
   (GoldenBinaryrConstraints s a, Typeable a, Arbitrary a, Eq a, Binary.Binary a) =>
@@ -92,19 +95,25 @@ goldenSpecsWithNotePlain settings@Settings {..} typeNameInfo@(TypeNameInfo {type
               then createGoldenfile @s settings proxy goldenFile
               else throwIO err
       if exists
-        then
-          compareWithGolden @s settings proxy goldenFile comparisonFile
-            `catches` [ Handler (\(err :: HUnitFailure) -> fixIfFlag err),
-                        Handler (\(err :: DecodeError) -> fixIfFlag err)
-                      ]
+        then do
+          doCompatibility <- isJust <$> lookupEnv compatibilityCheckEnv
+          if doCompatibility
+            then
+              compareCompatibilityWithGolden @s settings proxy goldenFile comparisonFile
+            else
+              compareWithGolden @s settings proxy goldenFile comparisonFile
+                `catches` [ Handler (\(err :: HUnitFailure) -> fixIfFlag err),
+                            Handler (\(err :: DecodeError) -> fixIfFlag err)
+                          ]
         else do
           doCreate <- isJust <$> lookupEnv createMissingGoldenEnv
           if doCreate
             then createGoldenfile @s settings proxy goldenFile
             else expectationFailure $ "Missing golden file: " <> goldenFile
 
--- | The golden files already exist. Binary values with the same seed from
--- the golden file and compare the with the data in the golden file.
+-- | PRE-condition: Golden file already exist.
+--   Try to decode golden file and encode it with the current encoder,
+--   then compare both encoded representations (byte for byte check).
 compareWithGolden ::
   forall s a.
   (GoldenBinaryrConstraints s a, Arbitrary a, Eq a, Binary.Binary a) =>
@@ -117,6 +126,24 @@ compareWithGolden _settings _Proxy goldenFile _comparisonFile = do
   goldenBytes <- readFile goldenFile
   let (randomSamples :: RandomSamples a) = Binary.decode goldenBytes 
   Binary.encode randomSamples `shouldBe` goldenBytes
+
+-- | PRE-condition: Golden file already exist.
+--   Try to decode the golden file, then re-encode and re-decode it again,
+--   finally compare initially decoded values with latest decoded ones (at type compatibility level)
+compareCompatibilityWithGolden ::
+  forall s a.
+  (GoldenBinaryrConstraints s a, Arbitrary a, Eq a, Binary.Binary a) =>
+  Settings ->
+  Proxy (s a) ->
+  FilePath ->
+  ComparisonFile ->
+  IO ()
+compareCompatibilityWithGolden _settings _Proxy goldenFile _comparisonFile = do
+  goldenBytes <- readFile goldenFile
+  let (randomSamples :: RandomSamples a) = Binary.decode goldenBytes 
+  let reEncodedGoldenBytes = Binary.encode randomSamples 
+  let (reDecodedRandomSamples:: RandomSamples a) = Binary.decode reEncodedGoldenBytes
+  randomSamples `shouldBe` reDecodedRandomSamples
 
 -- | The golden files do not exist. Create it.
 createGoldenfile :: forall s a. (Ctx s (RandomSamples a), GoldenBinaryr s, Arbitrary a) => Settings -> Proxy (s a) -> FilePath -> IO ()

@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           hspec-golden-binary
-version:        0.3.0.0
+version:        0.5.0.0
 synopsis:       Use tests to monitor changes in Binary serialization
 description:    Use tests to monitor changes in Binary serialization
 category:       Testing
@@ -59,6 +59,7 @@ test-suite test
       Test.Binary.GenericSpecsSpec
       Test.Types
       Test.Types.AlteredSelector
+      Test.Types.BackwardCompatible
       Test.Types.BrokenSerialization
       Test.Types.MismatchedToAndFromSerialization
       Test.Types.NewSelector

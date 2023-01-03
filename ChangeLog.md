@@ -1,5 +1,8 @@
 # Revision history for hspec-golden-binary
 
+## 0.5.0.0  -- 2022-12-28
+* Introduce COMPATIBILITY_CHECK mode
+
 ## 0.4.0.0  -- 2022-12-19
 * Remove roundtripFromFile, but re use their code in order to fix goldenSpecs
 
