@@ -111,8 +111,9 @@ goldenSpecsWithNotePlain settings@Settings {..} typeNameInfo@(TypeNameInfo {type
             then createGoldenfile @s settings proxy goldenFile
             else expectationFailure $ "Missing golden file: " <> goldenFile
 
--- | The golden files already exist. Binary values with the same seed from
--- the golden file and compare the with the data in the golden file (byte for byte check).
+-- | PRE-condition: Golden file already exist.
+--   Try to decode golden file and encode it with the current encoder,
+--   then compare both encoded representations (byte for byte check).
 compareWithGolden ::
   forall s a.
   (GoldenBinaryrConstraints s a, Arbitrary a, Eq a, Binary.Binary a) =>
@@ -126,8 +127,9 @@ compareWithGolden _settings _Proxy goldenFile _comparisonFile = do
   let (randomSamples :: RandomSamples a) = Binary.decode goldenBytes 
   Binary.encode randomSamples `shouldBe` goldenBytes
 
--- | The golden files already exist. Binary values with the same seed from
--- the golden file and compare the with the data in the golden file (at type compatibility level).
+-- | PRE-condition: Golden file already exist.
+--   Try to decode the golden file, then re-encode and re-decode it again,
+--   finally compare initially decoded values with latest decoded ones (at type compatibility level)
 compareCompatibilityWithGolden ::
   forall s a.
   (GoldenBinaryrConstraints s a, Arbitrary a, Eq a, Binary.Binary a) =>

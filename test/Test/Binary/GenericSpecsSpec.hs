@@ -126,7 +126,7 @@ spec = before unsetAllEnv $ do
         goldenSpecs defaultSettings (Proxy :: Proxy T.Person)
         goldenSpecs defaultSettings (Proxy :: Proxy T.SumType)
 
-    it "goldenSpecs for types which encoding is backward compatible should fail fail to match the goldenFiles" $ do
+    it "goldenSpecs for types which encoding is backward compatible should fail to match the goldenFiles" $ do
       shouldProduceFailures 1 $ goldenSpecs defaultSettings (Proxy :: Proxy TBC.Person)
 
     it "goldenSpecs for types which have changed the values of put or get keys should fail to match the goldenFiles" $ do

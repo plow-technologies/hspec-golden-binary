@@ -125,8 +125,9 @@ testConstructor Settings {..} moduleName typeName cap =
       else
         Nothing
 
--- | The golden files already exist. Binary values with the same seed from
--- the golden file and compare the with the data in the golden file (byte for byte check).
+-- | PRE-condition: Golden file already exist.
+--   Try to decode golden file and encode it with the current encoder,
+--   then compare both encoded representations (byte for byte check).
 compareWithGolden ::
   forall a.
   (ToADTArbitrary a, Eq a, Binary.Binary a) =>
@@ -138,8 +139,9 @@ compareWithGolden _cap goldenFile = do
   let (randomSamples :: RandomSamples a) = Binary.decode goldenBytes 
   Binary.encode randomSamples `shouldBe` goldenBytes
 
--- | The golden files already exist. Binary values with the same seed from
--- the golden file and compare the with the data in the golden file (at type compatibility level).
+-- | PRE-condition: Golden file already exist.
+--   Try to decode the golden file, then re-encode and re-decode it again,
+--   finally compare initially decoded values with latest decoded ones (at type compatibility level)
 compareCompatibilityWithGolden ::
   forall a.
   (ToADTArbitrary a, Eq a, Show a, Binary.Binary a) =>
