@@ -224,3 +224,9 @@ recreateBrokenGoldenEnv = "RECREATE_BROKEN_GOLDEN"
 
 compatibilityCheckEnv :: String 
 compatibilityCheckEnv = "COMPATIBILITY_CHECK"
+
+-- | env variable that indicates whether we golden test byte for byte
+-- TODO: Remove this flag, this should be the default behavior!
+-- At time of adjusting CI properly (only for cross build packages), Revert the PR that introduce this.
+byteForByteCheckEnv :: String 
+byteForByteCheckEnv = "BYTE_FOR_BYTE_CHECK"
