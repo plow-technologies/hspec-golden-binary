@@ -98,9 +98,11 @@ goldenSpecsWithNotePlain settings@Settings {..} typeNameInfo@(TypeNameInfo {type
         then do
           doCompatibility <- isJust <$> lookupEnv compatibilityCheckEnv
           if doCompatibility
-            then
+            then do
+              putStrLn "running golden tests in compatibility mode"
               compareCompatibilityWithGolden @s settings proxy goldenFile comparisonFile
-            else
+            else do
+              putStrLn "running golden tests using byte for byte check"
               compareWithGolden @s settings proxy goldenFile comparisonFile
                 `catches` [ Handler (\(err :: HUnitFailure) -> fixIfFlag err),
                             Handler (\(err :: DecodeError) -> fixIfFlag err)
@@ -108,7 +110,9 @@ goldenSpecsWithNotePlain settings@Settings {..} typeNameInfo@(TypeNameInfo {type
         else do
           doCreate <- isJust <$> lookupEnv createMissingGoldenEnv
           if doCreate
-            then createGoldenfile @s settings proxy goldenFile
+            then do
+              putStrLn "creating golden tests"
+              createGoldenfile @s settings proxy goldenFile
             else expectationFailure $ "Missing golden file: " <> goldenFile
 
 -- | PRE-condition: Golden file already exist.

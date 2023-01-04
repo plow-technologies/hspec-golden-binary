@@ -1,5 +1,8 @@
 # Revision history for hspec-golden-binary
 
+## 0.5.0.1  -- 2023-01-04
+* Logs about mode in use
+
 ## 0.5.0.0  -- 2022-12-28
 * Introduce COMPATIBILITY_CHECK mode
 
